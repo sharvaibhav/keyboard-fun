@@ -25,21 +25,21 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Log any config changes
   useEffect(() => {
-    console.log('Sound Configuration Updated:', config);
+    console.log("Sound Configuration Updated:", config);
   }, [config]);
 
   const setVolume = useCallback((volume: number) => {
-    console.log('Setting volume:', volume);
+    console.log("Setting volume:", volume);
     setConfig((prev) => ({ ...prev, volume }));
   }, []);
 
   const setTheme = useCallback((theme: SoundTheme) => {
-    console.log('Setting theme:', theme);
+    console.log("Setting theme:", theme);
     setConfig((prev) => ({ ...prev, theme }));
   }, []);
 
   const toggleSound = useCallback(() => {
-    console.log('Toggling sound');
+    console.log("Toggling sound");
     setConfig((prev) => ({ ...prev, enabled: !prev.enabled }));
   }, []);
 
@@ -47,9 +47,9 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({
     (type: SoundType) => {
       // Only play if sound is enabled and not in 'none' theme
       if (!config.enabled || config.theme === "none") {
-        console.log('Sound not played:', { 
-          enabled: config.enabled, 
-          theme: config.theme 
+        console.log("Sound not played:", {
+          enabled: config.enabled,
+          theme: config.theme,
         });
         return;
       }
@@ -61,18 +61,18 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({
       if (buffer) {
         const source = audioContext.createBufferSource();
         source.buffer = buffer;
-        
+
         const gainNode = audioContext.createGain();
         gainNode.gain.value = config.volume;
-        
+
         source.connect(gainNode);
         gainNode.connect(audioContext.destination);
-        
+
         source.start();
-        
-        console.log('Sound played:', { 
-          bufferKey, 
-          volume: config.volume 
+
+        console.log("Sound played:", {
+          bufferKey,
+          volume: config.volume,
         });
       } else {
         console.warn(`No buffer found for key: ${bufferKey}`);
@@ -97,7 +97,7 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({
 export const useSound = () => {
   const context = useContext(SoundContext);
   if (context === undefined) {
-    console.warn('useSound called outside of SoundProvider');
+    console.warn("useSound called outside of SoundProvider");
     return {
       config: {
         theme: "none",

@@ -1,11 +1,13 @@
 import KeyboardLearning from "./components/keyboard/KeyboardLearning";
 import { SoundProvider } from "./sound/SoundContext";
 import SoundSettingsModal from "./sound/SoundSettingsModal";
+import { SoundToggleButton } from "./sound/SoundToggleButton";
 
 function App() {
   return (
     <SoundProvider>
-      <div className="flex justify-end p-4">
+      <div className="flex justify-end items-center gap-2 p-4">
+        <SoundToggleButton />
         <SoundSettingsModal />
       </div>
       <KeyboardLearning />
@@ -14,19 +16,3 @@ function App() {
 }
 
 export default App;
-
-// import { SoundSettingsModal } from "@/components/sound/SoundSettingsModal";
-// import { SoundProvider } from "./sound/SoundContext";
-// import KeyboardLearning from "./components/keyboard/KeyboardLearning";
-
-// function App() {
-//   return (
-//     <SoundProvider>
-//       <div className="flex justify-end p-4">
-//         <SoundSettingsModal />
-//       </div>
-//       {/* Rest of your app */}
-//       <KeyboardLearning />
-//     </SoundProvider>
-//   );
-// }
