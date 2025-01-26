@@ -1,12 +1,11 @@
-// src/components/keyboard/KeyboardLearning.tsx
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Card } from "../ui/card";
 import { WordInput } from "../input/WordInput";
 import { WordDisplay } from "../display/WordDisplay";
 import { KeyboardLayout } from "./KeyboardLayout";
 import { WordList } from "../display/WordList";
 import { ProgressBar } from "../display/ProgressBar";
-import { useKeyPress } from "../../hooks/useKeyPress";
+import { useSound } from "@/sound/SoundContext";
 
 interface KeyboardLearningProps {
   initialWords?: string[];
@@ -20,14 +19,20 @@ const KeyboardLearning = ({
   const [currentLetterIndex, setCurrentLetterIndex] = useState(0);
   const [newWord, setNewWord] = useState("");
 
+  const { playSound } = useSound();
+
   const currentWord = wordList[currentWordIndex];
   const progress = (currentLetterIndex / currentWord.length) * 100;
 
   const handleCorrectKey = useCallback(() => {
+    playSound("keyPress");
+
     if (currentLetterIndex < currentWord.length - 1) {
       setCurrentLetterIndex((prev) => prev + 1);
     } else {
       setTimeout(() => {
+        playSound("wordComplete");
+
         if (currentWordIndex < wordList.length - 1) {
           setCurrentWordIndex((prev) => prev + 1);
         } else {
@@ -41,9 +46,23 @@ const KeyboardLearning = ({
     currentWord.length,
     currentWordIndex,
     wordList.length,
+    playSound,
   ]);
 
-  useKeyPress(currentWord[currentLetterIndex], handleCorrectKey);
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (
+        e.key.toLowerCase() === currentWord[currentLetterIndex].toLowerCase()
+      ) {
+        handleCorrectKey();
+      } else {
+        playSound("error");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [currentWord, currentLetterIndex, handleCorrectKey, playSound]);
 
   const handleAddWord = () => {
     if (newWord.trim()) {
@@ -99,7 +118,7 @@ const KeyboardLearning = ({
         />
       </div>
 
-      <div className=" overflow-auto bg-gray-50">
+      <div className="overflow-auto bg-gray-50">
         <div className="h-full flex items-center justify-center p-4">
           <Card className="w-full max-w-4xl p-8">
             <WordDisplay word={currentWord} currentIndex={currentLetterIndex} />
